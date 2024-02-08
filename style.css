@@ -29,7 +29,7 @@ body, html {
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.5), rgba(255,255,255,0.5), rgba(255,255,255,0.5));
+    background: radial-gradient(circle, rgba(255,255,255,0.5), rgba(168,168,168,0.5), rgba(192,192,192,0.5));
     animation: rotate 10s linear infinite;
 }
 
