@@ -1,11 +1,42 @@
-css
+
 body, html {
     height: 100%;
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #333;
+    background-color: #333;
+}
+
+.metal-card, .card {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.metal-card {
+    width: 300px;
+    height: 200px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.1));
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(8.5px);
+    border: 1px solid rgba(255,255,255,0.18);
+}
+
+.light-effect {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,0,0,0.5), rgba(0,0,255,0.5), rgba(0,255,0,0.5));
+    animation: rotate 10s linear infinite;
+}
+
+@keyframes rotate {
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 #scene {
@@ -17,7 +48,6 @@ body, html {
 .card {
     width: 400px;
     height: 250px;
-    position: relative;
     transform-style: preserve-3d;
     transition: transform 1s;
     font-family: 'Arial', sans-serif;
