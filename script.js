@@ -18,4 +18,4 @@ card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
     document.addEventListener('keydown', () => {
         window.location.href = 'https://tfp.la/stirling/';
     });
-});
+
