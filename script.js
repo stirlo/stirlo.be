@@ -15,13 +15,5 @@ document.addEventListener('DOMContentLoaded', () => {
         card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
     });
 
-    // Add click event listener to document
-    document.addEventListener('click', () => {
-        window.location.href = 'https://tfp.la/stirling/';
-    });
-
-    // Add keydown event listener to document
-    document.addEventListener('keydown', () => {
-        window.location.href = 'https://tfp.la/stirling/';
-    });
+    
 });
