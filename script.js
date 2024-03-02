@@ -21,7 +21,7 @@ function toggleSpin() {
   if (spinning) {
     spinCard(); // Resume spinning
   } else {
-    cardInner.style.transition = 'transform 0.6s'; // Smooth transition when stopping
+    cardInner.style.transition = 'transform 0.2s'; // Smooth transition when stopping
   }
 }
 
