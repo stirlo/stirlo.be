@@ -1,19 +1,28 @@
-document.addEventListener('DOMContentLoaded', () => {
-    document.addEventListener('mousemove', (e) => {
-        const card = document.getElementById('card');
-        if (!card) {
-            console.error('Card element not found!');
-            return;
-        }
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
-        const mouseX = e.clientX - centerX;
-        const mouseY = e.clientY - centerY;
-        const rotateY = mouseX * 0.1;
-        const rotateX = -mouseY * 0.1;
+let spinning = true;
+let angleX = 0;
+let angleY = 0;
+let angleZ = 0;
 
-        card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    });
+const cardInner = document.querySelector('.card-inner');
 
-    
-});
+function spinCard() {
+  if (spinning) {
+    angleX += 1;
+    angleY += 1;
+    angleZ += 1;
+    cardInner.style.transition = 'none';
+    cardInner.style.transform = `rotateX(${angleX}deg) rotateY(${angleY}deg) rotateZ(${angleZ}deg)`;
+    requestAnimationFrame(spinCard);
+  }
+}
+
+function toggleSpin() {
+  spinning = !spinning;
+  if (spinning) {
+    spinCard(); // Resume spinning
+  } else {
+    cardInner.style.transition = 'transform 0.6s'; // Smooth transition when stopping
+  }
+}
+
+spinCard(); // Start spinning on load
