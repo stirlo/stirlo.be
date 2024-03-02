@@ -16,8 +16,8 @@
     <!-- Recommended to specify image dimensions -->
     <meta property="og:image:width" content="512" />
     <meta property="og:image:height" content="512" />
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="theme-color" content="#ffffff">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stirling Campbell</title>
@@ -25,25 +25,25 @@
 </head>
 <body>
    <div class="card" onclick="flipCard(this)">
-  <div class="card-inner">
-    <div class="card-front">
-      <!-- Front Image -->
-      <img src="bizCardFront.png" alt="Front">
+        <div class="card-inner">
+            <div class="card-front">
+                <!-- Front Image -->
+                <img src="bizCardFront.png" alt="Front">
+            </div>
+            <div class="card-back">
+                <!-- Back Image -->
+                <img src="bizcardgreenback.png" alt="Back">
+            </div>
+        </div>
     </div>
-    <div class="card-back">
-      <!-- Back Image -->
-      <img src="bizcardgreenback.png" alt="Back">
-    </div>
-  </div>
-</div>
-        <script>function flipCard(card) {
-          const cardInner = card.querySelector('.card-inner');
-          cardInner.style.transform = cardInner.style.transform === 'rotateY(180deg)' ? '' : 'rotateY(180deg)';
-                                }
-            </script>
-    
+    <script>
+        function flipCard(card) {
+            const cardInner = card.querySelector('.card-inner');
+            cardInner.classList.toggle('is-flipped');
+        }
+    </script>
 <footer>
-  <p>&copy; <script>document.write(new Date().getFullYear())</script> <a href="https://tfp.la/stirling">tfp.la</a></p>
+    <p>&copy; <script>document.write(new Date().getFullYear())</script> <a href="https://tfp.la/stirling">tfp.la</a></p>
 </footer>
 </body>
-</html>
+</html>    
