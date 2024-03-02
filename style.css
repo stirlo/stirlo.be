@@ -9,10 +9,10 @@ html, body {
 
 .card {
   perspective: 1000px;
-  width: calc(100vw - 20px);
-  height: calc(100vh - 20px);
-  max-width: 600px;
-  max-height: 600px;
+  width: 80vw; /* Adjust based on your preference */
+  max-width: 600px; /* Maximum card width */
+  height: 80vh; /* Adjust based on your preference */
+  max-height: 600px; /* Maximum card height */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -21,7 +21,7 @@ html, body {
 .card-inner {
   width: 100%;
   height: 100%;
-  transition: transform 0.6s;
+  transition: transform 0.1s;
   transform-style: preserve-3d;
   cursor: pointer;
 }
@@ -37,6 +37,9 @@ html, body {
   position: absolute;
   top: 0;
   left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .card-back {
@@ -46,6 +49,5 @@ html, body {
 img {
   max-width: 100%;
   max-height: 100%;
-  display: block; /* Removes any extra space below the image */
-  object-fit: contain; /* Ensures the aspect ratio is preserved */
+  object-fit: contain; /* Ensures the image fits and maintains aspect ratio */
 }
