@@ -1,7 +1,15 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 .card {
   perspective: 1000px;
-  width: 2224px; /* Adjust based on your image size */
-  height: 1416px; /* Adjust based on your image size */
+  width: 100vw; /* Adjust to fill the width of the viewport */
+  height: 100vh; /* Adjust to fill the height of the viewport */
+  max-width: 100%; /* Ensure it does not exceed the viewport width */
+  max-height: 100%; /* Ensure it does not exceed the viewport height */
+  overflow: hidden; /* Prevent scrolling */
 }
 
 .card-inner {
@@ -31,4 +39,5 @@
 img {
   width: 100%;
   height: 100%;
+  object-fit: cover; /* Ensure the image covers the area without stretching */
 }
