@@ -24,26 +24,21 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="scene">
-        <a href="https://tfp.la/stirling" style="text-decoration:none; color:inherit;">
-        <div class="card" id="card">
-            <div class="metal-card">
-                     <div class="card-content">
-                <h1>Stirling Campbell</h1>
-                <p>Email: s@oursquadis.top</p>
-                <p>Phone: 0411146326</p>
-                <p>Mail: PO Box 1011</p>
-                <p>Caulfield North 3161</p>
-            </div>
-                  <div class="light-effect">
-            
-      </div>
-             </div>
-</a>
-
-                </div>
-        </div>
+   <div class="card" onclick="flipCard(this)">
+  <div class="card-inner">
+    <div class="card-front">
+      <!-- Front Image -->
+      <img src="BizCardFront.jpg" alt="Front Side">
     </div>
-    <script src="script.js"></script>
+    <div class="card-back">
+      <!-- Back Image -->
+      <img src="bizcardgreenback.jpg" alt="Back Side">
+    </div>
+  </div>
+</div>
+        function flipCard(card) {
+          const cardInner = card.querySelector('.card-inner');
+          cardInner.style.transform = cardInner.style.transform === 'rotateY(180deg)' ? '' : 'rotateY(180deg)';
+                                }
 </body>
 </html>
