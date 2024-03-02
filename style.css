@@ -5,6 +5,10 @@ html, body {
   justify-content: center;
   align-items: center;
   overflow: hidden;
+}
+
+body {
+  display: flex;
   flex-direction: column;
 }
 
