@@ -1,25 +1,29 @@
 html, body {
   height: 100%;
   margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
 .card {
   perspective: 1000px;
-  width: 100vw; /* Adjust to fill the width of the viewport */
-  height: 100vh; /* Adjust to fill the height of the viewport */
-  max-width: 100%; /* Ensure it does not exceed the viewport width */
-  max-height: 100%; /* Ensure it does not exceed the viewport height */
-  overflow: hidden; /* Prevent scrolling */
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .card-inner {
   width: 100%;
   height: 100%;
-  transition: transform 0.6s;
+  transition: transform 0.2s;
   transform-style: preserve-3d;
+  cursor: pointer; /* Indicate clickable */
 }
 
-.card:hover .card-inner {
+.card-inner.is-flipped {
   transform: rotateY(180deg);
 }
 
@@ -39,5 +43,5 @@ html, body {
 img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Ensure the image covers the area without stretching */
+  object-fit: cover;
 }
