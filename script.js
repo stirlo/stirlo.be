@@ -13,6 +13,10 @@ function initCard() {
   card.style.left = (window.innerWidth / 2 - card.offsetWidth / 2) + 'px';
   card.style.top = (window.innerHeight / 2 - card.offsetHeight / 2) + 'px';
 
+  // Reset Z-axis rotation
+  zRotation = 0;
+  card.style.transform = `rotate3d(1, 1, 1, ${zRotation}deg)`;
+
   // Set initial speed based on a random direction
   const directions = [300, 60, 120, 210];
   const direction = directions[Math.floor(Math.random() * directions.length)];
@@ -49,6 +53,38 @@ function moveCard() {
     card.style.top = (card.offsetTop + ySpeed) + 'px';
     card.style.transform = `rotate3d(1, 1, 1, ${zRotation}deg)`;
   }
+  
+  document.addEventListener('keydown', (e) => {
+  const step = 10; // Distance the card moves with each arrow key press
+  const rotationStep = 180; // Degrees the card rotates with each Page Up/Down press
+
+  switch (e.key) {
+    case 'ArrowUp':
+      card.style.top = Math.max(card.offsetTop - step, 0) + 'px';
+      break;
+    case 'ArrowDown':
+      card.style.top = Math.min(card.offsetTop + step, window.innerHeight - card.offsetHeight) + 'px';
+      break;
+    case 'ArrowLeft':
+      card.style.left = Math.max(card.offsetLeft - step, 0) + 'px';
+      break;
+    case 'ArrowRight':
+      card.style.left = Math.min(card.offsetLeft + step, window.innerWidth - card.offsetWidth) + 'px';
+      break;
+    case 'PageUp':
+      zRotation += rotationStep;
+      card.style.transform = `rotate3d(1, 1, 1, ${zRotation}deg)`;
+      break;
+    case 'PageDown':
+      zRotation -= rotationStep;
+      card.style.transform = `rotate3d(1, 1, 1, ${zRotation}deg)`;
+      break;
+    case 'Home':
+      initCard(); // Reset the card's position and initial movement
+      break;
+  }
+});
+
 
   requestAnimationFrame(moveCard);
 }
@@ -61,12 +97,6 @@ function getRandomRotationRate() {
 function adjustSpeed(speed) {
   return Math.sign(speed) * Math.max(Math.abs(speed), minSpeed);
 }
-
-// Dragging functionality (unchanged)
-// ...
-
-// Double click to double size (unchanged)
-// ...
 
 // Initialize and start moving the card
 initCard();
