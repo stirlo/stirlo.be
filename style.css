@@ -1,4 +1,3 @@
-/* === unchanged global styles === */
 body, html {
   height: 100%;
   margin: 0;
@@ -7,22 +6,17 @@ body, html {
   background-size: cover;
 }
 
-/* === updated container for WebGL canvas === */
 #container {
   position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* === new canvas element === */
-#dvdCanvas {
-  display: block;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 40px); /* Adjust based on footer height */
 }
 
-/* === footer stays the same === */
+#card {
+  position: absolute;
+  width: 40%; /* Adjust based on desired size */
+}
+
 footer {
   position: fixed;
   bottom: 0;
@@ -30,5 +24,18 @@ footer {
   text-align: center;
   background: rgba(0, 0, 0, 0.5);
   color: white;
+  cursor: grab;
+  transition: transform 0.2s ease-out, left 0.2s ease-out, top 0.2s ease-out; /* Smooth transitions */
   padding: 10px;
+}
+
+#card:active {
+  cursor: grabbing;
+}
+
+
+#card {
+  position: absolute;
+  width: 40%; /* Adjust based on the original size to make it 4x larger */
+  
 }
