@@ -1,103 +1,190 @@
-const card = document.getElementById('card');
-let xSpeed, ySpeed;
-let zRotation = 0; // Current Z-axis rotation
-let zRotationRate = 0; // Rotation rate for Z-axis
-let damping = 0.95; // Damping factor to reduce speed after bounce
-let minSpeed = 2; // Minimum speed to ensure it moves away from the edge
-let dragging = false;
-let originalWidth = card.offsetWidth; // Assuming originalWidth is defined
+/* ---------- 0.  CONFIG  ---------- */
+const DAMPING          = 0.95;
+const MIN_SPEED        = 2;
+const EXTRUDE_DEPTH    = 4;
+const SPARK_LIFE       = 600;
+const HALF_W           = 512 / 2;
+const HALF_H           = 288 / 2;
 
-// Initialize card position and speed
-function initCard() {
-  // Center the card
-  card.style.left = (window.innerWidth / 2 - card.offsetWidth / 2) + 'px';
-  card.style.top = (window.innerHeight / 2 - card.offsetHeight / 2) + 'px';
+/* ---------- 1.  THREE BASICS  ---------- */
+const scene    = new THREE.Scene();
+const camera   = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('dvdCanvas'), antialias: true, alpha: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(devicePixelRatio);
 
-  // Reset Z-axis rotation
-  zRotation = 0;
-  card.style.transform = `rotate3d(1, 1, 1, ${zRotation}deg)`;
+/* ---------- 2.  CARD MESH  ---------- */
+const textureLoader = new THREE.TextureLoader();
+const cardTexture   = textureLoader.load('bizCardFront.png', init);
+cardTexture.colorSpace = THREE.SRGBColorSpace;
 
-  // Set initial speed based on a random direction
-  const directions = [300, 60, 120, 210];
-  const direction = directions[Math.floor(Math.random() * directions.length)];
-  const speed = 2; // Initial speed
-  xSpeed = speed * Math.cos(direction * Math.PI / 180);
-  ySpeed = speed * Math.sin(direction * Math.PI / 180);
+const cardMat = new THREE.MeshStandardMaterial({
+  map: cardTexture,
+  metalness: 0.1,
+  roughness: 0.4,
+  emissive: 0x000000
+});
 
-  // Set an initial Z-axis rotation rate
-  zRotationRate = getRandomRotationRate();
+const shape = new THREE.Shape()
+  .moveTo(-HALF_W, -HALF_H)
+  .lineTo( HALF_W, -HALF_H)
+  .lineTo( HALF_W,  HALF_H)
+  .lineTo(-HALF_W,  HALF_H)
+  .closePath();
+
+const geo = new THREE.ExtrudeGeometry(shape, { depth: EXTRUDE_DEPTH, bevelEnabled: false });
+const cardMesh = new THREE.Mesh(geo, cardMat);
+scene.add(cardMesh);
+
+/* ---------- 3.  LIGHTING  ---------- */
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(-1, 1, 1).normalize();
+scene.add(light);
+scene.add(new THREE.AmbientLight(0x202030));
+
+/* ---------- 4.  POST-PROCESS  ---------- */
+const composer = new THREE.EffectComposer(renderer);
+composer.addPass(new THREE.RenderPass(scene, camera));
+composer.addPass(new THREE.UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.6, 0.4, 0.75));
+
+/* ---------- 5.  PARTICLE SPARKS  ---------- */
+const sparksGeo = new THREE.BufferGeometry();
+const sparksMat = new THREE.PointsMaterial({
+  color: 0xffffff,
+  size: 2,
+  transparent: true,
+  opacity: 0.9,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false
+});
+const sparks = new THREE.Points(sparksGeo, sparksMat);
+scene.add(sparks);
+
+/* ---------- 6.  PHYSICS STATE  ---------- */
+let xSpeed, ySpeed, zRotRate, sparksTimeout;
+
+/* ---------- 7.  INITIALISE  ---------- */
+function init() {
+  camera.position.z = 1000;
+  const angle = THREE.MathUtils.randInt(0, 5) * 60 * Math.PI / 180;
+  const speed = 4;
+  xSpeed = Math.cos(angle) * speed;
+  ySpeed = Math.sin(angle) * speed;
+  zRotRate = THREE.MathUtils.randFloat(-1, 1);
+  animate();
 }
 
-function moveCard() {
-  if (!dragging) {
-    let rect = card.getBoundingClientRect();
-    let containerRect = document.getElementById('container').getBoundingClientRect();
+/* ---------- 8.  MAIN LOOP  ---------- */
+function animate() {
+  requestAnimationFrame(animate);
 
-    // Update Z-axis rotation
-    zRotation += zRotationRate;
+  // move
+  cardMesh.position.x += xSpeed;
+  cardMesh.position.y += ySpeed;
+  cardMesh.rotation.z += zRotRate * 0.01;
 
-    // Check for collision with container edges
-    if (rect.right >= containerRect.right || rect.left <= containerRect.left) {
-      xSpeed *= -1 * damping;
-      xSpeed = adjustSpeed(xSpeed);
-      zRotationRate = getRandomRotationRate(); // Change Z-axis rotation rate
-    }
-    if (rect.bottom >= containerRect.bottom || rect.top <= containerRect.top) {
-      ySpeed *= -1 * damping;
-      ySpeed = adjustSpeed(ySpeed);
-      zRotationRate = getRandomRotationRate(); // Change Z-axis rotation rate
-    }
-
-    // Move and rotate card
-    card.style.left = (card.offsetLeft + xSpeed) + 'px';
-    card.style.top = (card.offsetTop + ySpeed) + 'px';
-    card.style.transform = `rotate3d(1, 1, 1, ${zRotation}deg)`;
+  // bounce
+  const hw = innerWidth / 2, hh = innerHeight / 2;
+  if (Math.abs(cardMesh.position.x) > hw - HALF_W) {
+    xSpeed *= -DAMPING;
+    xSpeed = Math.sign(xSpeed) * Math.max(Math.abs(xSpeed), MIN_SPEED);
+    zRotRate = THREE.MathUtils.randFloat(-1, 1);
+    colorShift(); spawnSparks();
   }
-  
-  document.addEventListener('keydown', (e) => {
-  const step = 10; // Distance the card moves with each arrow key press
-  const rotationStep = 180; // Degrees the card rotates with each Page Up/Down press
+  if (Math.abs(cardMesh.position.y) > hh - HALF_H) {
+    ySpeed *= -DAMPING;
+    ySpeed = Math.sign(ySpeed) * Math.max(Math.abs(ySpeed), MIN_SPEED);
+    zRotRate = THREE.MathUtils.randFloat(-1, 1);
+    colorShift(); spawnSparks();
+  }
 
+  // slow light sweep
+  const t = Date.now() * 0.0005;
+  light.position.x = Math.cos(t) * 2;
+  light.position.y = Math.sin(t) * 2;
+
+  // parallax update (see §9)
+  updateParallax();
+
+  composer.render();
+}
+
+/* ---------- 9.  PARALLAX GYRO + MOUSE  ---------- */
+let targetRotX = 0, targetRotY = 0;
+
+// mouse
+window.addEventListener('mousemove', e => {
+  targetRotX = ((e.clientY / innerHeight) - 0.5) * 30;
+  targetRotY = ((e.clientX / innerWidth)  - 0.5) * 30;
+});
+
+// gyro
+function enableGyro() {
+  if (window.DeviceOrientationEvent) {
+    const handler = e => {
+      targetRotX =  e.beta  * 0.25;
+      targetRotY = -e.gamma * 0.25;
+    };
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then(granted => granted && window.addEventListener('deviceorientation', handler));
+    } else {
+      window.addEventListener('deviceorientation', handler);
+    }
+  }
+}
+enableGyro();
+
+function updateParallax() {
+  const lerp = (a,b,t) => a + (b-a) * 0.05;
+  camera.rotation.x = lerp(camera.rotation.x, targetRotX, 0.05);
+  camera.rotation.y = lerp(camera.rotation.y, targetRotY, 0.05);
+}
+
+/* ---------- 10.  COLOUR SHIFT  ---------- */
+function colorShift() {
+  const hsl = {};
+  cardMat.color.getHSL(hsl);
+  const targetH = (hsl.h + 0.1 + Math.random()*0.2) % 1;
+  gsap.to(hsl, {
+    duration: 0.4,
+    h: targetH,
+    onUpdate: () => cardMat.color.setHSL(hsl.h, 1, 0.5)
+  });
+}
+
+/* ---------- 11.  SPARKS  ---------- */
+function spawnSparks() {
+  const pos = [];
+  for (let i = 0; i < 6; i++) {
+    pos.push(
+      cardMesh.position.x + (Math.random()-0.5)*40,
+      cardMesh.position.y + (Math.random()-0.5)*40,
+      cardMesh.position.z
+    );
+  }
+  sparksGeo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  sparksMat.opacity = 0.9;
+  clearTimeout(sparksTimeout);
+  sparksTimeout = setTimeout(() => sparksMat.opacity = 0, SPARK_LIFE);
+}
+
+/* ---------- 12.  KEYBOARD  ---------- */
+document.addEventListener('keydown', e => {
+  const step = 10;
   switch (e.key) {
-    case 'ArrowUp':
-      card.style.top = Math.max(card.offsetTop - step, 0) + 'px';
-      break;
-    case 'ArrowDown':
-      card.style.top = Math.min(card.offsetTop + step, window.innerHeight - card.offsetHeight) + 'px';
-      break;
-    case 'ArrowLeft':
-      card.style.left = Math.max(card.offsetLeft - step, 0) + 'px';
-      break;
-    case 'ArrowRight':
-      card.style.left = Math.min(card.offsetLeft + step, window.innerWidth - card.offsetWidth) + 'px';
-      break;
-    case 'PageUp':
-      zRotation += rotationStep;
-      card.style.transform = `rotate3d(1, 1, 1, ${zRotation}deg)`;
-      break;
-    case 'PageDown':
-      zRotation -= rotationStep;
-      card.style.transform = `rotate3d(1, 1, 1, ${zRotation}deg)`;
-      break;
-    case 'Home':
-      initCard(); // Reset the card's position and initial movement
-      break;
+    case 'ArrowUp':    cardMesh.position.y -= step; break;
+    case 'ArrowDown':  cardMesh.position.y += step; break;
+    case 'ArrowLeft':  cardMesh.position.x -= step; break;
+    case 'ArrowRight': cardMesh.position.x += step; break;
+    case 'Home':       init(); break;
   }
 });
 
-
-  requestAnimationFrame(moveCard);
-}
-
-function getRandomRotationRate() {
-  // Generate a random rotation rate between -1 and 1 degrees per frame
-  return Math.random() * 2 - 1;
-}
-
-function adjustSpeed(speed) {
-  return Math.sign(speed) * Math.max(Math.abs(speed), minSpeed);
-}
-
-// Initialize and start moving the card
-initCard();
-moveCard();
+/* ---------- 13.  RESIZE  ---------- */
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  composer.setSize(innerWidth, innerHeight);
+});
