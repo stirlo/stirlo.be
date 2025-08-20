@@ -45,13 +45,21 @@
     </p>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r163/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r163/examples/js/postprocessing/EffectComposer.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r163/examples/js/postprocessing/RenderPass.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r163/examples/js/postprocessing/UnrealBloomPass.js"></script>
+ <!-- 1. Import map -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.163.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.163.0/examples/jsm/"
+  }
+}
+</script>
 
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<!-- 2. ES-module Three.js + post-processing -->
+<script type="module" src="script.js"></script>
 
-  <script src="script.js"></script>
+<!-- 3. GSAP (non-module is fine) -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+
 </body>
 </html>
