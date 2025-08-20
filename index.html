@@ -1,69 +1,51 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Stirling Campbell</title>
-  <meta name="title" content="Stirling Campbell"/>
-  <meta name="description" content="0411146326 / s@oursquadis.top"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stirling Campbell</title>
+    <meta name="title" content="Stirling Campbell" />
+    <meta name="description" content="0411146326 / s@oursquadis.top" />
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
-  <link rel="manifest" href="/site.webmanifest"/>
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#71ae4f"/>
-  <meta name="msapplication-TileColor" content="#71ae4f"/>
-  <meta name="theme-color" content="#71ae4f"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#71ae4f">
+    <meta name="msapplication-TileColor" content="#71ae4f">
+    <meta name="theme-color" content="#71ae4f">
 
-  <meta property="og:type" content="website"/>
-  <meta property="og:url" content="https://stirlo.be/"/>
-  <meta property="og:title" content="Stirling Campbell"/>
-  <meta property="og:description" content="0411146326 / s@oursquadis.top"/>
-  <meta property="og:image" content="https://stirlo.be/android-chrome-512x512.png"/>
-  <meta property="og:image:width" content="512"/>
-  <meta property="og:image:height" content="512"/>
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://stirlo.be/" />
+    <meta property="og:title" content="Stirling Campbell" />
+    <meta property="og:description" content="0411146326 / s@oursquadis.top" />
+    <meta property="og:image" content="https://stirlo.be/android-chrome-512x512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
 
-  <meta property="twitter:card" content="summary_large_image"/>
-  <meta property="twitter:url" content="https://stirlo.be/"/>
-  <meta property="twitter:title" content="Stirling Campbell"/>
-  <meta property="twitter:description" content="0411146326 / s@oursquadis.top"/>
-  <meta property="twitter:image" content="https://stirlo.be/android-chrome-512x512.png"/>
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://stirlo.be/" />
+    <meta property="twitter:title" content="Stirling Campbell" />
+    <meta property="twitter:description" content="0411146326 / s@oursquadis.top" />
+    <meta property="twitter:image" content="https://stirlo.be/android-chrome-512x512.png" />
 
-  <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="container">
-    <canvas id="dvdCanvas"></canvas>
-  </div>
-
-  <footer>
-    <p>
-      <a href="LICENSE">©</a> <span id="currentYear"></span>
-      <a href="https://tfp.la">TFP</a> |
-      <a href="https://thelaboratory.cc">The Laboratory</a> |
-      <a href="https://thelaboratory.cc/thankyou.html">Thank You</a>
-    </p>
-  </footer>
-
-
- <!-- 1. import-map -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.163.0/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.163.0/examples/jsm/"
-    }
-  }
-  </script>
-  
-  <!-- 2. polyfill -->
-  <script src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
-  
-  <!-- 3. dynamic import – waits until the map is ready -->
-  <script type="module">
-    import('./script.js');   // ← fixes the timing issue
-  </script>
-  
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+    <div id="container">
+        <img src="bizCardFront.png" id="card" alt="Stirling Campbell">
+    </div>
+    <footer>
+        <p>
+            <a href="LICENSE">©</a> <span id="currentYear"></span> 
+            <a href="https://tfp.la">TFP</a> | 
+            <a href="https://thelaboratory.cc">The Laboratory</a> | 
+            <a href="https://thelaboratory.cc/thankyou.html">Thank You</a>
+        </p>
+    </footer>
+    <script src="script.js"></script>
 </body>
 </html>
