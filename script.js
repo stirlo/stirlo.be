@@ -1,10 +1,10 @@
 /* ---------- 0.  ES-MODULE IMPORTS  ---------- */
 import * as THREE from 'three';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass }     from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { EffectComposer }   from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass }       from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass }  from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-/* ---------- 0.  CONFIG  ---------- */
+/* ---------- 1.  CONFIG  ---------- */
 const DAMPING          = 0.95;
 const MIN_SPEED        = 2;
 const EXTRUDE_DEPTH    = 4;
@@ -12,14 +12,14 @@ const SPARK_LIFE       = 600;
 const HALF_W           = 512 / 2;
 const HALF_H           = 288 / 2;
 
-/* ---------- 1.  THREE BASICS  ---------- */
+/* ---------- 2.  THREE BASICS  ---------- */
 const scene    = new THREE.Scene();
 const camera   = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('dvdCanvas'), antialias: true, alpha: true });
 renderer.setSize(innerWidth, innerHeight);
 renderer.setPixelRatio(devicePixelRatio);
 
-/* ---------- 2.  CARD MESH  ---------- */
+/* ---------- 3.  CARD MESH  ---------- */
 const textureLoader = new THREE.TextureLoader();
 const cardTexture   = textureLoader.load('bizCardFront.png', init);
 cardTexture.colorSpace = THREE.SRGBColorSpace;
@@ -42,18 +42,18 @@ const geo = new THREE.ExtrudeGeometry(shape, { depth: EXTRUDE_DEPTH, bevelEnable
 const cardMesh = new THREE.Mesh(geo, cardMat);
 scene.add(cardMesh);
 
-/* ---------- 3.  LIGHTING  ---------- */
+/* ---------- 4.  LIGHTING  ---------- */
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(-1, 1, 1).normalize();
 scene.add(light);
 scene.add(new THREE.AmbientLight(0x202030));
 
-/* ---------- 4.  POST-PROCESS  ---------- */
+/* ---------- 5.  POST-PROCESS  ---------- */
 const composer = new THREE.EffectComposer(renderer);
 composer.addPass(new THREE.RenderPass(scene, camera));
-composer.addPass(new THREE.UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.6, 0.4, 0.75));
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.6, 0.4, 0.75));
 
-/* ---------- 5.  PARTICLE SPARKS  ---------- */
+/* ---------- 6.  PARTICLE SPARKS  ---------- */
 const sparksGeo = new THREE.BufferGeometry();
 const sparksMat = new THREE.PointsMaterial({
   color: 0xffffff,
@@ -66,10 +66,10 @@ const sparksMat = new THREE.PointsMaterial({
 const sparks = new THREE.Points(sparksGeo, sparksMat);
 scene.add(sparks);
 
-/* ---------- 6.  PHYSICS STATE  ---------- */
+/* ---------- 7.  PHYSICS STATE  ---------- */
 let xSpeed, ySpeed, zRotRate, sparksTimeout;
 
-/* ---------- 7.  INITIALISE  ---------- */
+/* ---------- 8.  INITIALISE  ---------- */
 function init() {
   camera.position.z = 1000;
   const angle = THREE.MathUtils.randInt(0, 5) * 60 * Math.PI / 180;
@@ -80,7 +80,7 @@ function init() {
   animate();
 }
 
-/* ---------- 8.  MAIN LOOP  ---------- */
+/* ---------- 9.  MAIN LOOP  ---------- */
 function animate() {
   requestAnimationFrame(animate);
 
@@ -109,13 +109,13 @@ function animate() {
   light.position.x = Math.cos(t) * 2;
   light.position.y = Math.sin(t) * 2;
 
-  // parallax update (see §9)
+  // parallax update
   updateParallax();
 
   composer.render();
 }
 
-/* ---------- 9.  PARALLAX GYRO + MOUSE  ---------- */
+/* ---------- 10.  PARALLAX GYRO + MOUSE  ---------- */
 let targetRotX = 0, targetRotY = 0;
 
 // mouse
@@ -147,7 +147,7 @@ function updateParallax() {
   camera.rotation.y = lerp(camera.rotation.y, targetRotY, 0.05);
 }
 
-/* ---------- 10.  COLOUR SHIFT  ---------- */
+/* ---------- 11.  COLOUR SHIFT  ---------- */
 function colorShift() {
   const hsl = {};
   cardMat.color.getHSL(hsl);
@@ -159,7 +159,7 @@ function colorShift() {
   });
 }
 
-/* ---------- 11.  SPARKS  ---------- */
+/* ---------- 12.  SPARKS  ---------- */
 function spawnSparks() {
   const pos = [];
   for (let i = 0; i < 6; i++) {
@@ -175,7 +175,7 @@ function spawnSparks() {
   sparksTimeout = setTimeout(() => sparksMat.opacity = 0, SPARK_LIFE);
 }
 
-/* ---------- 12.  KEYBOARD  ---------- */
+/* ---------- 13.  KEYBOARD  ---------- */
 document.addEventListener('keydown', e => {
   const step = 10;
   switch (e.key) {
@@ -187,7 +187,7 @@ document.addEventListener('keydown', e => {
   }
 });
 
-/* ---------- 13.  RESIZE  ---------- */
+/* ---------- 14.  RESIZE  ---------- */
 window.addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
