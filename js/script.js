@@ -46,7 +46,7 @@ renderer.setPixelRatio(devicePixelRatio);
 
 /* ---------- 3.  CARD MESH  ---------- */
 const textureLoader = new TextureLoader();
-const cardTexture   = textureLoader.load('bizCardFront.png', init);
+const cardTexture   = textureLoader.load('../bizCardFront.png', init);
 cardTexture.colorSpace = SRGBColorSpace;
 
 const cardMat = new MeshStandardMaterial({
