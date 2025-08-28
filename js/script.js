@@ -1,69 +1,94 @@
 /* ---------- 0.  ES-MODULE IMPORTS  ---------- */
-import * as THREE from 'three';
-import { EffectComposer }   from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass }       from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass }  from 'three/addons/postprocessing/UnrealBloomPass.js';
+import {
+  Scene,
+  PerspectiveCamera,
+  WebGLRenderer,
+  TextureLoader,
+  SRGBColorSpace,
+  MeshStandardMaterial,
+  Shape,
+  ExtrudeGeometry,
+  Mesh,
+  DirectionalLight,
+  AmbientLight,
+  Vector2,
+  MathUtils,
+  BufferGeometry,
+  PointsMaterial,
+  Points,
+  Float32BufferAttribute,
+  AdditiveBlending
+} from 'three';
+
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 /* ---------- 1.  CONFIG  ---------- */
-const DAMPING          = 0.95;
-const MIN_SPEED        = 2;
-const EXTRUDE_DEPTH    = 4;
-const SPARK_LIFE       = 600;
-const HALF_W           = 512 / 2;
-const HALF_H           = 288 / 2;
+const DAMPING       = 0.95;
+const MIN_SPEED     = 2;
+const EXTRUDE_DEPTH = 4;
+const SPARK_LIFE    = 600;
+const HALF_W        = 512 / 2;
+const HALF_H        = 288 / 2;
 
 /* ---------- 2.  THREE BASICS  ---------- */
-const scene    = new THREE.Scene();
-const camera   = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('dvdCanvas'), antialias: true, alpha: true });
+const scene    = new Scene();
+const camera   = new PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 1000);
+const renderer = new WebGLRenderer({
+  canvas: document.getElementById('dvdCanvas'),
+  antialias: true,
+  alpha: true
+});
 renderer.setSize(innerWidth, innerHeight);
 renderer.setPixelRatio(devicePixelRatio);
 
 /* ---------- 3.  CARD MESH  ---------- */
-const textureLoader = new THREE.TextureLoader();
+const textureLoader = new TextureLoader();
 const cardTexture   = textureLoader.load('bizCardFront.png', init);
-cardTexture.colorSpace = THREE.SRGBColorSpace;
+cardTexture.colorSpace = SRGBColorSpace;
 
-const cardMat = new THREE.MeshStandardMaterial({
+const cardMat = new MeshStandardMaterial({
   map: cardTexture,
   metalness: 0.1,
   roughness: 0.4,
   emissive: 0x000000
 });
 
-const shape = new THREE.Shape()
+const shape = new Shape()
   .moveTo(-HALF_W, -HALF_H)
   .lineTo( HALF_W, -HALF_H)
   .lineTo( HALF_W,  HALF_H)
   .lineTo(-HALF_W,  HALF_H)
   .closePath();
 
-const geo = new THREE.ExtrudeGeometry(shape, { depth: EXTRUDE_DEPTH, bevelEnabled: false });
-const cardMesh = new THREE.Mesh(geo, cardMat);
+const geo = new ExtrudeGeometry(shape, { depth: EXTRUDE_DEPTH, bevelEnabled: false });
+const cardMesh = new Mesh(geo, cardMat);
 scene.add(cardMesh);
 
 /* ---------- 4.  LIGHTING  ---------- */
-const light = new THREE.DirectionalLight(0xffffff, 1);
+const light = new DirectionalLight(0xffffff, 1);
 light.position.set(-1, 1, 1).normalize();
 scene.add(light);
-scene.add(new THREE.AmbientLight(0x202030));
+scene.add(new AmbientLight(0x202030));
 
 /* ---------- 5.  POST-PROCESS  ---------- */
-const composer = new THREE.EffectComposer(renderer);
-composer.addPass(new THREE.RenderPass(scene, camera));
-composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.6, 0.4, 0.75));
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+composer.addPass(new UnrealBloomPass(new Vector2(innerWidth, innerHeight), 0.6, 0.4, 0.75));
 
 /* ---------- 6.  PARTICLE SPARKS  ---------- */
-const sparksGeo = new THREE.BufferGeometry();
-const sparksMat = new THREE.PointsMaterial({
+const sparksGeo = new BufferGeometry();
+const sparksMat = new PointsMaterial({
   color: 0xffffff,
   size: 2,
   transparent: true,
   opacity: 0.9,
-  blending: THREE.AdditiveBlending,
+  blending: AdditiveBlending,
   depthWrite: false
 });
-const sparks = new THREE.Points(sparksGeo, sparksMat);
+const sparks = new Points(sparksGeo, sparksMat);
 scene.add(sparks);
 
 /* ---------- 7.  PHYSICS STATE  ---------- */
@@ -72,11 +97,11 @@ let xSpeed, ySpeed, zRotRate, sparksTimeout;
 /* ---------- 8.  INITIALISE  ---------- */
 function init() {
   camera.position.z = 1000;
-  const angle = THREE.MathUtils.randInt(0, 5) * 60 * Math.PI / 180;
+  const angle = MathUtils.randInt(0, 5) * 60 * Math.PI / 180;
   const speed = 4;
   xSpeed = Math.cos(angle) * speed;
   ySpeed = Math.sin(angle) * speed;
-  zRotRate = THREE.MathUtils.randFloat(-1, 1);
+  zRotRate = MathUtils.randFloat(-1, 1);
   animate();
 }
 
@@ -94,13 +119,13 @@ function animate() {
   if (Math.abs(cardMesh.position.x) > hw - HALF_W) {
     xSpeed *= -DAMPING;
     xSpeed = Math.sign(xSpeed) * Math.max(Math.abs(xSpeed), MIN_SPEED);
-    zRotRate = THREE.MathUtils.randFloat(-1, 1);
+    zRotRate = MathUtils.randFloat(-1, 1);
     colorShift(); spawnSparks();
   }
   if (Math.abs(cardMesh.position.y) > hh - HALF_H) {
     ySpeed *= -DAMPING;
     ySpeed = Math.sign(ySpeed) * Math.max(Math.abs(ySpeed), MIN_SPEED);
-    zRotRate = THREE.MathUtils.randFloat(-1, 1);
+    zRotRate = MathUtils.randFloat(-1, 1);
     colorShift(); spawnSparks();
   }
 
@@ -118,13 +143,11 @@ function animate() {
 /* ---------- 10.  PARALLAX GYRO + MOUSE  ---------- */
 let targetRotX = 0, targetRotY = 0;
 
-// mouse
 window.addEventListener('mousemove', e => {
   targetRotX = ((e.clientY / innerHeight) - 0.5) * 30;
   targetRotY = ((e.clientX / innerWidth)  - 0.5) * 30;
 });
 
-// gyro
 function enableGyro() {
   if (window.DeviceOrientationEvent) {
     const handler = e => {
@@ -169,7 +192,7 @@ function spawnSparks() {
       cardMesh.position.z
     );
   }
-  sparksGeo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  sparksGeo.setAttribute('position', new Float32BufferAttribute(pos, 3));
   sparksMat.opacity = 0.9;
   clearTimeout(sparksTimeout);
   sparksTimeout = setTimeout(() => sparksMat.opacity = 0, SPARK_LIFE);
