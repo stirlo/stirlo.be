@@ -24,7 +24,8 @@ import {
   Points,
   Float32BufferAttribute,
   AdditiveBlending,
-  DoubleSide
+  DoubleSide,
+  Group
 } from 'three';
 
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
@@ -119,7 +120,7 @@ backCard.position.z = -1;
 backCard.rotation.y = Math.PI; // Flip back card 180°
 
 // Group both cards together
-const cardGroup = new THREE.Group();
+const cardGroup = new Group();
 cardGroup.add(frontCard);
 cardGroup.add(backCard);
 scene.add(cardGroup);
@@ -284,7 +285,6 @@ function onBounce() {
 /* ---------- 12. SPARK EFFECTS ---------- */
 function spawnSparks() {
   const positions = [];
-  const velocities = [];
 
   for (let i = 0; i < SPARK_COUNT; i++) {
     // Position sparks around card
