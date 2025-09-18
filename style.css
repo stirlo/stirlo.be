@@ -3,21 +3,38 @@
 body, html {
   height: 100%;
   margin: 0;
-  overflow: hidden; /* Prevent scrollbars */
-  background: #1a4d1a; /* Dark green fallback background */
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow: hidden;
+  background: url('bizcardgreenback.png') no-repeat center center fixed;
+  background-size: cover;
+  /* Fallback for when 3D scene loads */
+  background-color: #1a4d1a;
 }
 
 /* === MAIN CONTAINER === */
-/* Container for the WebGL canvas - takes full viewport */
+/* Updated container for WebGL canvas - now full height */
 #container {
   position: relative;
   width: 100vw;
-  height: 100vh;
+  height: 100vh; /* Changed from calc(100% - 40px) to full height */
   overflow: hidden;
 }
 
-/* === CANVAS ELEMENT === */
+/* === LEGACY CARD ELEMENT (Hidden when 3D loads) === */
+/* Keep the old card styles for fallback/transition */
+#card {
+  position: absolute;
+  width: 40%; /* Original size from stable version */
+  cursor: grab;
+  transition: transform 0.2s ease-out, left 0.2s ease-out, top 0.2s ease-out;
+  /* Hide by default - 3D version takes over */
+  display: none;
+}
+
+#card:active {
+  cursor: grabbing;
+}
+
+/* === NEW 3D CANVAS === */
 /* The Three.js WebGL canvas */
 #dvdCanvas {
   display: block;
@@ -27,7 +44,7 @@ body, html {
 }
 
 /* === FOOTER === */
-/* Fixed footer with semi-transparent background */
+/* Footer stays mostly the same but with some enhancements */
 footer {
   position: fixed;
   bottom: 0;
@@ -36,8 +53,10 @@ footer {
   background: rgba(0, 0, 0, 0.5);
   color: white;
   padding: 10px;
-  font-size: 14px;
-  z-index: 100; /* Ensure footer stays on top */
+  cursor: grab; /* Keep the grab cursor from original */
+  transition: transform 0.2s ease-out, left 0.2s ease-out, top 0.2s ease-out;
+  z-index: 100; /* Ensure footer stays on top of 3D scene */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Footer link styles */
@@ -53,10 +72,26 @@ footer a:hover {
 }
 
 /* === RESPONSIVE DESIGN === */
-/* Adjust footer text size on smaller screens */
+/* Adjust for smaller screens */
 @media (max-width: 480px) {
   footer {
     font-size: 12px;
     padding: 8px;
   }
+
+  /* If fallback 2D card is shown */
+  #card {
+    width: 60%; /* Larger on mobile */
+  }
+}
+
+/* === LOADING STATE === */
+/* Optional: Show background image while 3D scene loads */
+body.loading #dvdCanvas {
+  opacity: 0;
+  transition: opacity 0.5s ease-in;
+}
+
+body.loaded #dvdCanvas {
+  opacity: 1;
 }
