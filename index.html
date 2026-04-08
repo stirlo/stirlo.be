@@ -1,13 +1,10 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Stirling Campbell</title>
-  <meta name="title" content="Stirling Campbell"/>
-  <meta name="description" content="0411146326 / <mailto:s@oursquadis.top>"/>
-
-  <!-- Favicon and app icons -->
+  <meta name="description" content="TFP — Truthfieldprojection"/>
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
@@ -15,32 +12,20 @@
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#71ae4f"/>
   <meta name="msapplication-TileColor" content="#71ae4f"/>
   <meta name="theme-color" content="#71ae4f"/>
-
-  <!-- Open Graph meta tags for social media sharing -->
   <meta property="og:type" content="website"/>
   <meta property="og:url" content="https://stirlo.be/"/>
   <meta property="og:title" content="Stirling Campbell"/>
-  <meta property="og:description" content="0411146326 / <mailto:s@oursquadis.top>"/>
+  <meta property="og:description" content="TFP — Truthfieldprojection"/>
   <meta property="og:image" content="https://stirlo.be/android-chrome-512x512.png"/>
   <meta property="og:image:width" content="512"/>
   <meta property="og:image:height" content="512"/>
-
-  <!-- Twitter Card meta tags -->
-  <meta property="twitter:card" content="summary_large_image"/>
-  <meta property="twitter:url" content="https://stirlo.be/"/>
-  <meta property="twitter:title" content="Stirling Campbell"/>
-  <meta property="twitter:description" content="0411146326 / <mailto:s@oursquadis.top>"/>
-  <meta property="twitter:image" content="https://stirlo.be/android-chrome-512x512.png"/>
-
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <!-- Main container for the 3D canvas -->
   <div id="container">
     <canvas id="dvdCanvas"></canvas>
   </div>
 
-  <!-- Footer with links -->
   <footer>
     <p>
       <a href="LICENSE">©</a> <span id="currentYear"></span>
@@ -50,8 +35,6 @@
     </p>
   </footer>
 
-  <!-- Module system setup for Three.js -->
-  <!-- 1. Import map defines where to find Three.js modules -->
   <script type="importmap">
   {
     "imports": {
@@ -61,18 +44,19 @@
   }
   </script>
 
-  <!-- 2. Polyfill for older browsers that don't support ES modules -->
-  <script src="./js/es-module-shims.min.js"></script>
+  <!-- ES module shims for Safari compatibility -->
+  <script async src="./js/es-module-shims.min.js"></script>
 
-  <!-- 3. Main application script -->
   <script type="module">
-    import('./js/script.js');
+    import('./js/script.js').catch(err => {
+      // Fallback: show static card if WebGL fails
+      console.warn('3D load failed, showing fallback', err);
+      document.body.classList.add('fallback');
+    });
   </script>
 
-  <!-- 4. GSAP animation library for smooth color transitions -->
   <script src="./js/gsap.min.js"></script>
 
-  <!-- Set current year in footer -->
   <script>
     document.getElementById('currentYear').textContent = new Date().getFullYear();
   </script>
